@@ -1,5 +1,13 @@
 version: "3.9"
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    platform: linux/amd64
+
   frontend:
     build:
       context: ./frontend
@@ -11,3 +19,7 @@ services:
       - /app/node_modules
     stdin_open: true
     tty: true
+    depends_on:
+      - backend
+    platform: linux/amd64
+

@@ -2,15 +2,15 @@ API_DEFINITION := api/openapi.yaml
 FE_API_DIR := frontend/src/api
 FE_API_CLIENT := typescript-axios
 
-.PHONY: up down build clean_build logs exec-backend exec-frontend generate-client clean openapi-validate
+.PHONY: up down build clean_build logs exec-backend exec-frontend generate-client clean
 
 up:
-	docker compose up -d --build
+	docker compose up -d
 
 down:
 	docker compose down
 
-build:
+build: generate-client
 	docker compose build
 
 clean-build:
@@ -20,19 +20,21 @@ logs:
 	docker compose logs -f
 
 exec-backend:
-	docker compose exec backend bash #バックエンドコンテナ内でbashを実行
+	docker compose exec tascal-backend bash #バックエンドコンテナ内でbashを実行
 
 exec-frontend:
-	docker compose exec frontend bash #フロントエンドコンテナ内でbashを実行
+	docker compose exec tascal-frontend bash #フロントエンドコンテナ内でbashを実行
 
 clean:
 	@echo "Cleaning output directory..."
 	rm -rf $(FE_API_DIR)
 	rm -rf frontend/dist
+	rm -rf backend/target
 
 generate-client:
 	@echo "Generating client code..."
 	docker run --rm \
+		--platform linux/amd64 \
 		-v $(shell pwd):/local \
 		openapitools/openapi-generator-cli generate \
 		-i /local/$(API_DEFINITION) \
@@ -41,9 +43,3 @@ generate-client:
 		--api-package api \
 		--model-package model \
 		--additional-properties withInterfaces=true,withSeparateModelsAndApi=true
-
-openapi-validate:
-	@echo "Validating OpenAPI spec..."
-	docker run --rm \
-		-v $(shell pwd):/local \
-		stoplight/spectral lint /local/$(API_DEFINITION)
