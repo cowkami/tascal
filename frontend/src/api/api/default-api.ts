@@ -33,6 +33,36 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 
+         * @summary サーバーのヘルスチェック
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        healthGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/health`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary タスクの一覧を取得
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -107,6 +137,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary サーバーのヘルスチェック
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async healthGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.healthGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.healthGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary タスクの一覧を取得
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -142,6 +184,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
+         * @summary サーバーのヘルスチェック
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        healthGet(options?: RawAxiosRequestConfig): AxiosPromise<string> {
+            return localVarFp.healthGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary タスクの一覧を取得
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -170,6 +221,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 export interface DefaultApiInterface {
     /**
      * 
+     * @summary サーバーのヘルスチェック
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    healthGet(options?: RawAxiosRequestConfig): AxiosPromise<string>;
+
+    /**
+     * 
      * @summary タスクの一覧を取得
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -196,6 +256,17 @@ export interface DefaultApiInterface {
  * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI implements DefaultApiInterface {
+    /**
+     * 
+     * @summary サーバーのヘルスチェック
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public healthGet(options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).healthGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @summary タスクの一覧を取得

@@ -11,7 +11,7 @@ RUN cargo build --release
 FROM debian:stable-slim
 
 # ビルドステージからバイナリをコピー
-COPY --from=builder /app/target/release/api-server /app/api-server
+COPY --from=builder /app/target/release/server /app/server
 
 # 実行コマンド
-CMD ["/app/api-server"]
+CMD ["/app/server"]

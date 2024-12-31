@@ -1,16 +1,15 @@
 API_DEFINITION := api/openapi.yaml
 FE_API_DIR := frontend/src/api
-FE_API_CLIENT := typescript-axios
 
-.PHONY: up down build clean_build logs exec-backend exec-frontend generate-client clean
+.PHONY: up down build clean_build logs exec-backend exec-frontend generate-fe-api generate-be-api clean
 
 up:
-	docker compose up -d
+	docker compose up --build
 
 down:
 	docker compose down
 
-build: generate-client
+build: generate-fe-api generate-be-api
 	docker compose build
 
 clean-build:
@@ -31,15 +30,28 @@ clean:
 	rm -rf frontend/dist
 	rm -rf backend/target
 
-generate-client:
-	@echo "Generating client code..."
+generate-fe-api:
+	@echo "Generating frontend API code..."
 	docker run --rm \
 		--platform linux/amd64 \
 		-v $(shell pwd):/local \
 		openapitools/openapi-generator-cli generate \
 		-i /local/$(API_DEFINITION) \
-		-g $(FE_API_CLIENT) \
+		-g typescript-axios \
 		-o /local/$(FE_API_DIR) \
+		--api-package api \
+		--model-package model \
+		--additional-properties withInterfaces=true,withSeparateModelsAndApi=true
+
+generate-be-api:
+	@echo "Generating backend API code..."
+	docker run --rm \
+		--platform linux/amd64 \
+		-v $(shell pwd):/local \
+		openapitools/openapi-generator-cli generate \
+		-i /local/$(API_DEFINITION) \
+		-g rust-axum \
+		-o /local/backend/api-server/openapi \
 		--api-package api \
 		--model-package model \
 		--additional-properties withInterfaces=true,withSeparateModelsAndApi=true

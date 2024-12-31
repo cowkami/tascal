@@ -1,8 +1,12 @@
 [package]
-name = "api-server"
+name = "server"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 axum = "0.7.9"
 tokio = { version = "1.42.0", features = ["full"] }
+
+openapi = { path = "../openapi" }
+axum-extra = "0.9.6"
+http = "1.2.0"

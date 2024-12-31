@@ -4,6 +4,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: ./backend
     ports:
       - "3000:3000"
     platform: linux/amd64
