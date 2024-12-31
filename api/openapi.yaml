@@ -1,0 +1,40 @@
+openapi: 3.0.0
+info:
+  title: 業務割当API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+components:
+  schemas:
+    Task:
+      $ref: "./components/schemas/Task.yaml"
+paths:
+  /tasks:
+    get:
+      summary: タスクの一覧を取得
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    assignee:
+                      type: string
+    post:
+      summary: タスクを新規作成
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Task"
+      responses:
+        "201":
+          description: 作成成功

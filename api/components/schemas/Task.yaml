@@ -1,0 +1,26 @@
+type: object
+properties:
+  id:
+    type: string
+    description: タスクID
+    readOnly: true # 読み取り専用 (自動生成されるIDなど)
+  title:
+    type: string
+    description: タスクのタイトル
+    maxLength: 255
+  description:
+    type: string
+    description: タスクの詳細な説明
+  assignee:
+    type: string
+    description: 担当者
+  status:
+    type: string
+    enum: # 取りうる値のリスト
+      - todo
+      - in_progress
+      - done
+    description: タスクの状態
+required: # 必須属性
+  - title
+  - status
