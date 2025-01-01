@@ -1,3 +1,4 @@
+use anyhow::Result;
 use axum::async_trait;
 use axum::extract::Host;
 use axum_extra::extract::CookieJar;
@@ -42,7 +43,10 @@ impl Clone for ApiImpl {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
+    env_logger::init();
+    log::info!("Starting server");
+
     let api_impl = ApiImpl;
     // build our application with a single route
     let app = openapi::server::new(api_impl);
@@ -53,5 +57,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Failed to bind to port 3000");
     axum::serve(listener, app).await.expect("Failed to serve");
 
+    log::info!("Server stopped");
     Ok(())
 }

@@ -4,25 +4,19 @@ FE_API_DIR := frontend/src/api
 .PHONY: up down build clean_build logs exec-backend exec-frontend generate-fe-api generate-be-api clean
 
 up:
-	docker compose up --build
-
-down:
-	docker compose down
+	docker compose watch
 
 build: generate-fe-api generate-be-api
 	docker compose build
 
-clean-build:
+clean-build: clean generate-fe-api generate-be-api
 	docker compose build --no-cache
 
 logs:
 	docker compose logs -f
 
-exec-backend:
-	docker compose exec tascal-backend bash #バックエンドコンテナ内でbashを実行
-
-exec-frontend:
-	docker compose exec tascal-frontend bash #フロントエンドコンテナ内でbashを実行
+be-check:
+	docker compose run --rm backend cargo check
 
 clean:
 	@echo "Cleaning output directory..."
