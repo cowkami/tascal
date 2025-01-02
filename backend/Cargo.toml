@@ -1,2 +1,9 @@
 [workspace]
-members = ["api-server/server", "api-server/openapi", "domain", "usecase"]
+members = [
+    "app",
+    "crates/domain",
+    "crates/usecase",
+    "crates/infra/api-server/server",
+    "crates/infra/api-server/openapi",
+    "crates/infra/db",
+]

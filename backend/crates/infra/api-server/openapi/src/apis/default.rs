@@ -31,6 +31,7 @@ pub enum TasksGetResponse {
 pub enum TasksPostResponse {
     /// 作成成功
     Status201
+    (models::Task)
 }
 
 

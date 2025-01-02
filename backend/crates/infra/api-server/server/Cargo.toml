@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 openapi = { path = "../openapi" }
+domain = { path = "../../../domain" }
 
 axum = "0.7.9"
 axum-extra = "0.9.6"

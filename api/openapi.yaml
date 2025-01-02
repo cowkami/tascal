@@ -22,6 +22,26 @@ paths:
   /tasks:
     get:
       summary: タスクの一覧を取得
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                queryType:
+                  type: string
+                  enum:
+                    - idList
+                    - assignee
+                    - status
+                idList:
+                  type: array
+                  items:
+                    type: string
+                assignee:
+                  type: string
+                status:
+                  type: string
       responses:
         "200":
           description: 成功
@@ -30,14 +50,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    title:
-                      type: string
-                    assignee:
-                      type: string
+                  $ref: "#/components/schemas/Task"
     post:
       summary: タスクを新規作成
       requestBody:

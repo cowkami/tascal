@@ -45,7 +45,7 @@ generate-be-api:
 		openapitools/openapi-generator-cli generate \
 		-i /local/$(API_DEFINITION) \
 		-g rust-axum \
-		-o /local/backend/api-server/openapi \
+		-o /local/backend/crates/infra/api-server/openapi \
 		--api-package api \
 		--model-package model \
 		--additional-properties withInterfaces=true,withSeparateModelsAndApi=true

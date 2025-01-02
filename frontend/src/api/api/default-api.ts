@@ -166,7 +166,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async tasksPost(task?: Task, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async tasksPost(task?: Task, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Task>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.tasksPost(task, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.tasksPost']?.[localVarOperationServerIndex]?.url;
@@ -207,7 +207,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        tasksPost(task?: Task, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        tasksPost(task?: Task, options?: RawAxiosRequestConfig): AxiosPromise<Task> {
             return localVarFp.tasksPost(task, options).then((request) => request(axios, basePath));
         },
     };
@@ -245,7 +245,7 @@ export interface DefaultApiInterface {
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    tasksPost(task?: Task, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    tasksPost(task?: Task, options?: RawAxiosRequestConfig): AxiosPromise<Task>;
 
 }
 

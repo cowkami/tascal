@@ -1,9 +1,13 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use axum::async_trait;
 use axum::extract::Host;
+use axum::Extension;
 use axum_extra::extract::CookieJar;
 use http::Method;
 
+use domain::task_repo::ProvideTaskRepo;
 use openapi::apis::default::Default;
 use openapi::apis::default::{HealthGetResponse, TasksGetResponse, TasksPostResponse};
 
@@ -12,11 +16,11 @@ struct ApiImpl;
 #[async_trait]
 impl Default for ApiImpl {
     async fn health_get(&self, _: Method, _: Host, _: CookieJar) -> Result<HealthGetResponse, ()> {
-        Ok(HealthGetResponse::Status200("ok".to_string()))
+        todo!()
     }
 
     async fn tasks_get(&self, _: Method, _: Host, _: CookieJar) -> Result<TasksGetResponse, ()> {
-        Ok(TasksGetResponse::Status200(vec![]))
+        todo!()
     }
 
     async fn tasks_post(
@@ -26,7 +30,7 @@ impl Default for ApiImpl {
         _: CookieJar,
         _: Option<openapi::models::Task>,
     ) -> Result<TasksPostResponse, ()> {
-        Ok(TasksPostResponse::Status201)
+        todo!()
     }
 }
 
@@ -42,21 +46,27 @@ impl Clone for ApiImpl {
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    env_logger::init();
-    log::info!("Starting server");
+pub async fn run<T>(context: T) -> Result<()>
+where
+    T: 'static + Clone + Send + Sync + ProvideTaskRepo,
+{
+    log::info!("Starting api server...");
 
-    let api_impl = ApiImpl;
+    // Arc is used to allow the context to be shared across threads
+    let context = Arc::new(context);
+
     // build our application with a single route
-    let app = openapi::server::new(api_impl);
+    let app = openapi::server::new(ApiImpl).layer(Extension(context));
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
         .await
         .expect("Failed to bind to port 3000");
-    axum::serve(listener, app).await.expect("Failed to serve");
 
-    log::info!("Server stopped");
+    axum::serve(listener, app)
+        .await
+        .expect("Failed to start api server");
+
+    log::info!("Api server stopped");
     Ok(())
 }

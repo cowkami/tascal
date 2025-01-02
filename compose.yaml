@@ -1,24 +1,10 @@
 version: "3.9"
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    develop:
-      watch:
-        - action: sync
-          path: ./backend
-          target: ./backend
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./backend/.env
-    platform: linux/amd64
-
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    platform: linux/amd64
     ports:
       - "5173:5173"
     volumes:
@@ -28,5 +14,49 @@ services:
     tty: true
     depends_on:
       - backend
-    platform: linux/amd64
+    networks:
+      - default
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: ./backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+    networks:
+      - default
+
+  db:
+    image: postgres:15-alpine
+    platform: linux/amd64
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always  # コンテナが停止した場合に自動的に再起動
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
+
+networks:
+  default:
+    name: tascal-network
