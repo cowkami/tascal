@@ -1,2 +1,2 @@
 [workspace]
-members = ["api-server/server", "api-server/openapi", "domain"]
+members = ["api-server/server", "api-server/openapi", "domain", "usecase"]

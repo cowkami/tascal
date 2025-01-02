@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use uuid::Uuid;
 
+#[derive(Debug, Clone)]
 pub struct Task {
     id: TaskId,
     title: String,
@@ -9,8 +10,10 @@ pub struct Task {
     status: TaskStatus,
 }
 
+#[derive(Debug, Clone)]
 pub struct TaskId(Uuid);
 
+#[derive(Debug, Clone)]
 pub enum TaskStatus {
     ToDo,
     InProgress,
