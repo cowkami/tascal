@@ -15,24 +15,24 @@ use crate::{models, types::*};
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct Task {
-/// タスクID
+    /// タスクID
     #[serde(rename = "id")]
     #[serde(skip_serializing_if="Option::is_none")]
     pub id: Option<String>,
 
-/// タスクのタイトル
+    /// タスクのタイトル
     #[serde(rename = "title")]
     #[validate(
             length(max = 255),
         )]
     pub title: String,
 
-/// タスクの詳細な説明
+    /// タスクの詳細な説明
     #[serde(rename = "description")]
     #[serde(skip_serializing_if="Option::is_none")]
     pub description: Option<String>,
 
-/// 担当者
+    /// 担当者
     #[serde(rename = "assignee")]
     #[serde(skip_serializing_if="Option::is_none")]
     pub assignee: Option<String>,
@@ -41,6 +41,9 @@ pub struct Task {
     pub status: models::TaskStatus,
 
 }
+
+
+
 
 
 impl Task {
@@ -244,7 +247,7 @@ impl std::str::FromStr for TaskStatus {
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct TasksGetRequest {
-/// Note: inline enums are not fully supported by openapi-generator
+    /// Note: inline enums are not fully supported by openapi-generator
     #[serde(rename = "queryType")]
     pub query_type: String,
 
@@ -261,6 +264,9 @@ pub struct TasksGetRequest {
     pub status: Option<models::TaskStatus>,
 
 }
+
+
+
 
 
 impl TasksGetRequest {
