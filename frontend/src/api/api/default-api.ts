@@ -24,7 +24,7 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { Task } from '../model';
 // @ts-ignore
-import type { TasksGet200ResponseInner } from '../model';
+import type { TasksGetRequest } from '../model';
 /**
  * DefaultApi - axios parameter creator
  * @export
@@ -64,10 +64,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary タスクの一覧を取得
+         * @param {TasksGetRequest} [tasksGetRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        tasksGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        tasksGet: async (tasksGetRequest?: TasksGetRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/tasks`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -82,9 +83,12 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(tasksGetRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -150,11 +154,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary タスクの一覧を取得
+         * @param {TasksGetRequest} [tasksGetRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async tasksGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TasksGet200ResponseInner>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.tasksGet(options);
+        async tasksGet(tasksGetRequest?: TasksGetRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Task>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.tasksGet(tasksGetRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.tasksGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -194,11 +199,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary タスクの一覧を取得
+         * @param {TasksGetRequest} [tasksGetRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        tasksGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<TasksGet200ResponseInner>> {
-            return localVarFp.tasksGet(options).then((request) => request(axios, basePath));
+        tasksGet(tasksGetRequest?: TasksGetRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<Task>> {
+            return localVarFp.tasksGet(tasksGetRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -231,11 +237,12 @@ export interface DefaultApiInterface {
     /**
      * 
      * @summary タスクの一覧を取得
+     * @param {TasksGetRequest} [tasksGetRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    tasksGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<TasksGet200ResponseInner>>;
+    tasksGet(tasksGetRequest?: TasksGetRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<Task>>;
 
     /**
      * 
@@ -270,12 +277,13 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
     /**
      * 
      * @summary タスクの一覧を取得
+     * @param {TasksGetRequest} [tasksGetRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public tasksGet(options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).tasksGet(options).then((request) => request(this.axios, this.basePath));
+    public tasksGet(tasksGetRequest?: TasksGetRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).tasksGet(tasksGetRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

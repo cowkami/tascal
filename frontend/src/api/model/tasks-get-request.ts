@@ -20,40 +20,41 @@ import type { TaskStatus } from './task-status';
 /**
  * 
  * @export
- * @interface Task
+ * @interface TasksGetRequest
  */
-export interface Task {
+export interface TasksGetRequest {
     /**
-     * タスクID
+     * 
      * @type {string}
-     * @memberof Task
+     * @memberof TasksGetRequest
      */
-    'id'?: string;
+    'queryType': TasksGetRequestQueryTypeEnum;
     /**
-     * タスクのタイトル
-     * @type {string}
-     * @memberof Task
+     * 
+     * @type {Array<string>}
+     * @memberof TasksGetRequest
      */
-    'title': string;
+    'idList'?: Array<string>;
     /**
-     * タスクの詳細な説明
+     * 
      * @type {string}
-     * @memberof Task
-     */
-    'description'?: string;
-    /**
-     * 担当者
-     * @type {string}
-     * @memberof Task
+     * @memberof TasksGetRequest
      */
     'assignee'?: string;
     /**
      * 
      * @type {TaskStatus}
-     * @memberof Task
+     * @memberof TasksGetRequest
      */
-    'status': TaskStatus;
+    'status'?: TaskStatus;
 }
 
+export const TasksGetRequestQueryTypeEnum = {
+    IdList: 'idList',
+    Assignee: 'assignee',
+    Status: 'status'
+} as const;
+
+export type TasksGetRequestQueryTypeEnum = typeof TasksGetRequestQueryTypeEnum[keyof typeof TasksGetRequestQueryTypeEnum];
 
 
