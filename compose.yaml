@@ -53,16 +53,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
   swagger-ui:
-    build: 
-      context: ./api
-      dockerfile: Dockerfile
+    image: swaggerapi/swagger-ui:latest
     platform: linux/amd64
+    environment:
+      - SWAGGER_JSON=/openapi.yaml
     ports:
-      - "3200:3200"
+      - "3200:8080"
     volumes:
-      - ./openapi.yaml:/usr/share/nginx/html/openapi.yaml
+      - ./api/openapi.yaml:/openapi.yaml
 
 volumes:
   db_data:
