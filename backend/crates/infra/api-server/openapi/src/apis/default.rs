@@ -22,7 +22,11 @@ pub enum HealthGetResponse {
 pub enum TasksGetResponse {
     /// 成功
     Status200
-    (Vec<models::TasksGet200ResponseInner>)
+    (Vec<models::Task>)
+    ,
+    /// クエリが不正
+    Status400
+    (String)
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -57,6 +61,7 @@ pub trait Default {
     method: Method,
     host: Host,
     cookies: CookieJar,
+            body: Option<models::TasksGetRequest>,
     ) -> Result<TasksGetResponse, ()>;
 
     /// タスクを新規作成.

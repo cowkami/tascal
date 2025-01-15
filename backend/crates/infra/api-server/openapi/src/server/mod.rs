@@ -108,14 +108,28 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
+    #[derive(validator::Validate)]
+    #[allow(dead_code)]
+    struct TasksGetBodyValidator<'a> {
+            #[validate(nested)]
+          body: &'a models::TasksGetRequest,
+    }
+
 
 #[tracing::instrument(skip_all)]
 fn tasks_get_validation(
+        body: Option<models::TasksGetRequest>,
 ) -> std::result::Result<(
+        Option<models::TasksGetRequest>,
 ), ValidationErrors>
 {
+            if let Some(body) = &body {
+              let b = TasksGetBodyValidator { body };
+              b.validate()?;
+            }
 
 Ok((
+    body,
 ))
 }
 /// TasksGet - GET /api/v1/tasks
@@ -125,6 +139,7 @@ async fn tasks_get<I, A>(
   host: Host,
   cookies: CookieJar,
  State(api_impl): State<I>,
+          Json(body): Json<Option<models::TasksGetRequest>>,
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
@@ -135,10 +150,12 @@ where
       #[allow(clippy::redundant_closure)]
       let validation = tokio::task::spawn_blocking(move ||
     tasks_get_validation(
+          body,
     )
   ).await.unwrap();
 
   let Ok((
+      body,
   )) = validation else {
     return Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -150,6 +167,7 @@ where
       method,
       host,
       cookies,
+              body,
   ).await;
 
   let mut response = Response::builder();
@@ -160,6 +178,24 @@ where
                                                     (body)
                                                 => {
                                                   let mut response = response.status(200);
+                                                  {
+                                                    let mut response_headers = response.headers_mut().unwrap();
+                                                    response_headers.insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
+                                                  }
+
+                                                  let body_content =  tokio::task::spawn_blocking(move ||
+                                                      serde_json::to_vec(&body).map_err(|e| {
+                                                        error!(error = ?e);
+                                                        StatusCode::INTERNAL_SERVER_ERROR
+                                                      })).await.unwrap()?;
+                                                  response.body(Body::from(body_content))
+                                                },
+                                                apis::default::TasksGetResponse::Status400
+                                                    (body)
+                                                => {
+                                                  let mut response = response.status(400);
                                                   {
                                                     let mut response_headers = response.headers_mut().unwrap();
                                                     response_headers.insert(
