@@ -50,9 +50,9 @@ export interface TasksGetRequest {
 }
 
 export const TasksGetRequestQueryTypeEnum = {
-    IdList: 'idList',
-    Assignee: 'assignee',
-    Status: 'status'
+    IdList: 'IdList',
+    Assignee: 'Assignee',
+    Status: 'Status'
 } as const;
 
 export type TasksGetRequestQueryTypeEnum = typeof TasksGetRequestQueryTypeEnum[keyof typeof TasksGetRequestQueryTypeEnum];
