@@ -1,3 +1,5 @@
+mod tasks;
+
 use std::sync::Arc;
 
 use anyhow::Result;
@@ -10,16 +12,36 @@ use http::Method;
 use domain::task_repo::ProvideTaskRepo;
 use openapi::apis::default::Default;
 use openapi::apis::default::{HealthGetResponse, TasksGetResponse, TasksPostResponse};
+use usecase::task::ListTaskQuery;
 
+use crate::tasks::*;
+
+#[derive(Debug)]
 struct ApiImpl;
 
 #[async_trait]
 impl Default for ApiImpl {
     async fn health_get(&self, _: Method, _: Host, _: CookieJar) -> Result<HealthGetResponse, ()> {
-        todo!()
+        Ok(HealthGetResponse::Status200("ok".to_string()))
     }
 
-    async fn tasks_get(&self, _: Method, _: Host, _: CookieJar) -> Result<TasksGetResponse, ()> {
+    async fn tasks_get(
+        &self,
+        _: Method,
+        _: Host,
+        _: CookieJar,
+        request: Option<openapi::models::TasksGetRequest>,
+    ) -> Result<TasksGetResponse, ()> {
+        let query = request
+            .ok_or(anyhow::anyhow!("Invalid request"))
+            .and_then(TasksGetRequestWrapper::try_from)
+            .and_then(ListTaskQuery::try_from)
+            .expect("Invalid request");
+
+        println!("query: {:?}", query);
+
+        println!("api impl: {:?}", self);
+
         todo!()
     }
 
@@ -31,18 +53,6 @@ impl Default for ApiImpl {
         _: Option<openapi::models::Task>,
     ) -> Result<TasksPostResponse, ()> {
         todo!()
-    }
-}
-
-impl AsRef<ApiImpl> for ApiImpl {
-    fn as_ref(&self) -> &ApiImpl {
-        self
-    }
-}
-
-impl Clone for ApiImpl {
-    fn clone(&self) -> Self {
-        Self
     }
 }
 
@@ -69,4 +79,16 @@ where
 
     log::info!("Api server stopped");
     Ok(())
+}
+
+impl AsRef<ApiImpl> for ApiImpl {
+    fn as_ref(&self) -> &ApiImpl {
+        self
+    }
+}
+
+impl Clone for ApiImpl {
+    fn clone(&self) -> Self {
+        Self
+    }
 }

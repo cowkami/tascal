@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-openapi = { path = "../openapi" }
 domain = { path = "../../../domain" }
+usecase = { path = "../../../usecase" }
+openapi = { path = "../openapi" }
 
 axum = "0.7.9"
 axum-extra = "0.9.6"

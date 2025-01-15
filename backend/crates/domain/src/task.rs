@@ -54,6 +54,30 @@ impl TryFrom<String> for TaskId {
     }
 }
 
+impl From<TaskStatus> for String {
+    fn from(status: TaskStatus) -> Self {
+        match status {
+            TaskStatus::ToDo => "ToDo",
+            TaskStatus::InProgress => "InProgress",
+            TaskStatus::Done => "Done",
+        }
+        .to_string()
+    }
+}
+
+impl TryFrom<String> for TaskStatus {
+    type Error = anyhow::Error;
+
+    fn try_from(status: String) -> Result<Self> {
+        match status.as_str() {
+            "ToDo" => Ok(TaskStatus::ToDo),
+            "InProgress" => Ok(TaskStatus::InProgress),
+            "Done" => Ok(TaskStatus::Done),
+            _ => anyhow::bail!("Invalid task status: {}", status),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

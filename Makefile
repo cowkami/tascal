@@ -4,7 +4,7 @@ FE_API_DIR := frontend/src/api
 .PHONY: up down build clean_build logs exec-backend exec-frontend generate-fe-api generate-be-api clean
 
 up:
-	docker compose watch
+	docker compose up
 
 build: generate-fe-api generate-be-api
 	docker compose build
