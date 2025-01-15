@@ -4,10 +4,6 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:3000/api/v1
-components:
-  schemas:
-    Task:
-      $ref: "./components/schemas/Task.yaml"
 paths:
   /health:
     get:
@@ -31,9 +27,9 @@ paths:
                 queryType:
                   type: string
                   enum:
-                    - idList
-                    - assignee
-                    - status
+                    - IdList
+                    - Assignee
+                    - Status
                 idList:
                   type: array
                   items:
@@ -41,7 +37,10 @@ paths:
                 assignee:
                   type: string
                 status:
-                  type: string
+                  $ref: "./components/schemas/TaskStatus.yaml"
+              required:
+                - queryType
+                - queryValue
       responses:
         "200":
           description: 成功
@@ -50,18 +49,24 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Task"
+                  $ref: "./components/schemas/Task.yaml"
+        "400":
+          description: クエリが不正
+          content:
+            application/json:
+              schema:
+                type: string
     post:
       summary: タスクを新規作成
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Task"
+              $ref: "./components/schemas/Task.yaml"
       responses:
         "201":
           description: 作成成功
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Task"
+                $ref: "./components/schemas/Task.yaml"

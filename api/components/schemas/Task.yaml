@@ -15,11 +15,7 @@ properties:
     type: string
     description: 担当者
   status:
-    type: string
-    enum: # 取りうる値のリスト
-      - todo
-      - in_progress
-      - done
+    $ref: "./TaskStatus.yaml"
     description: タスクの状態
 required: # 必須属性
   - title
