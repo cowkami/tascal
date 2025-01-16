@@ -53,19 +53,29 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
   swagger-ui:
     image: swaggerapi/swagger-ui:latest
     platform: linux/amd64
     environment:
-      - SWAGGER_JSON=/openapi.yaml
+      - SWAGGER_JSON=/api/openapi.yaml
     ports:
-      - "3200:8080"
+      - "8080:8080"
     volumes:
-      - ./api/openapi.yaml:/openapi.yaml
+      - ./api:/api
+    develop:
+      watch:
+        - action: sync
+          path: ./api
+          target: /api
+    depends_on:
+      - backend
+    networks:
+      - default
 
 volumes:
   db_data:
 
 networks:
   default:
-    name: tascal-network
+
