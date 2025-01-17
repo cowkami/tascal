@@ -7,7 +7,9 @@ use axum::async_trait;
 use axum::extract::Host;
 use axum::Extension;
 use axum_extra::extract::CookieJar;
+use http::HeaderValue;
 use http::Method;
+use tower_http::cors::CorsLayer;
 
 use domain::task_repo::ProvideTaskRepo;
 use openapi::apis::default::Default;
@@ -65,8 +67,26 @@ where
     // Arc is used to allow the context to be shared across threads
     let context = Arc::new(context);
 
+    // CORS for development
+    let cors = CorsLayer::new()
+        .allow_origin("http://localhost:3200".parse::<HeaderValue>().unwrap())
+        .allow_methods(vec![
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::DELETE,
+            Method::OPTIONS,
+        ])
+        .allow_headers(vec![
+            http::header::CONTENT_TYPE,
+            http::header::AUTHORIZATION,
+            http::header::ORIGIN,
+        ]);
+
     // build our application with a single route
-    let app = openapi::server::new(ApiImpl).layer(Extension(context));
+    let app = openapi::server::new(ApiImpl)
+        .layer(Extension(context))
+        .layer(cors);
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
