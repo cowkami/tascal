@@ -4,6 +4,7 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:3000/api/v1
+    description: ローカル開発環境
 paths:
   /health:
     get:
