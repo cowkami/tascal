@@ -35,10 +35,11 @@ impl Default for ApiImpl {
         request: Option<openapi::models::TasksGetRequest>,
     ) -> Result<TasksGetResponse, ()> {
         let query = request
+            .clone()
             .ok_or(anyhow::anyhow!("Invalid request"))
             .and_then(TasksGetRequestWrapper::try_from)
             .and_then(ListTaskQuery::try_from)
-            .expect("Invalid request");
+            .expect(format!("Faled to parse request: {:?}", request).as_str());
 
         println!("query: {:?}", query);
 

@@ -43,9 +43,9 @@ impl TryFrom<TasksGetRequestWrapper> for ListTaskQuery {
         let query_type = request.query_type.clone();
 
         let query = match query_type.as_str() {
-            "idList" => by_id_list(request.clone()),
-            "assignee" => by_assignee(request.clone()),
-            "status" => by_status(request.clone()),
+            "IdList" => by_id_list(request.clone()),
+            "Assignee" => by_assignee(request.clone()),
+            "Status" => by_status(request.clone()),
             _ => anyhow::bail!("Invalid query type: {}", query_type),
         };
 
