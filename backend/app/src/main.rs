@@ -8,11 +8,9 @@ use server;
 #[tokio::main]
 async fn main() -> Result<()> {
     env_logger::init();
+    log::info!("Starting app...");
 
-    log::info!("Connecting to database...");
     let context = AppContext::new().await?;
-
-    log::info!("Starting server...");
     server::run(context).await?;
 
     log::info!("Server stopped");
@@ -26,9 +24,11 @@ struct AppContext {
 
 impl AppContext {
     async fn new() -> Result<Self> {
+        log::info!("Connecting to database...");
         let db_connection = db::get_connection()
             .await
             .with_context(|| "Failed to connect to database")?;
+        log::info!("Connected to database");
 
         Ok(Self {
             task_repo: TaskRepoImpl::new(db_connection),
