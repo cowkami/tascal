@@ -69,7 +69,7 @@ where
 
     // CORS for development
     let cors = CorsLayer::new()
-        .allow_origin("http://localhost:3200".parse::<HeaderValue>().unwrap())
+        .allow_origin("http://localhost:8080".parse::<HeaderValue>().unwrap())
         .allow_methods(vec![
             Method::GET,
             Method::POST,
