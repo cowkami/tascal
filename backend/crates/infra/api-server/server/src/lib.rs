@@ -1,11 +1,8 @@
 mod tasks;
 
-use std::sync::Arc;
-
 use anyhow::Result;
 use axum::async_trait;
 use axum::extract::Host;
-use axum::Extension;
 use axum_extra::extract::CookieJar;
 use http::HeaderValue;
 use http::Method;
@@ -19,10 +16,13 @@ use usecase::task::ListTaskQuery;
 use crate::tasks::*;
 
 #[derive(Debug)]
-struct ApiImpl;
+struct ApiImpl<T>(T);
 
 #[async_trait]
-impl Default for ApiImpl {
+impl<T> Default for ApiImpl<T>
+where
+    T: ProvideTaskRepo + Send + Sync + Clone,
+{
     async fn health_get(&self, _: Method, _: Host, _: CookieJar) -> Result<HealthGetResponse, ()> {
         Ok(HealthGetResponse::Status200("ok".to_string()))
     }
@@ -42,8 +42,6 @@ impl Default for ApiImpl {
             .expect(format!("Faled to parse request: {:?}", request).as_str());
 
         println!("query: {:?}", query);
-
-        println!("api impl: {:?}", self);
 
         todo!()
     }
@@ -65,9 +63,6 @@ where
 {
     log::info!("Starting api server...");
 
-    // Arc is used to allow the context to be shared across threads
-    let context = Arc::new(context);
-
     // CORS for development
     let cors = CorsLayer::new()
         .allow_origin("http://localhost:8080".parse::<HeaderValue>().unwrap())
@@ -85,9 +80,7 @@ where
         ]);
 
     // build our application with a single route
-    let app = openapi::server::new(ApiImpl)
-        .layer(Extension(context))
-        .layer(cors);
+    let app = openapi::server::new(ApiImpl(context.clone())).layer(cors);
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
@@ -102,14 +95,20 @@ where
     Ok(())
 }
 
-impl AsRef<ApiImpl> for ApiImpl {
-    fn as_ref(&self) -> &ApiImpl {
+impl<T> AsRef<ApiImpl<T>> for ApiImpl<T>
+where
+    T: Send + Sync + Clone + ProvideTaskRepo,
+{
+    fn as_ref(&self) -> &ApiImpl<T> {
         self
     }
 }
 
-impl Clone for ApiImpl {
+impl<T> Clone for ApiImpl<T>
+where
+    T: Send + Sync + Clone + ProvideTaskRepo,
+{
     fn clone(&self) -> Self {
-        Self
+        Self(self.0.clone())
     }
 }
