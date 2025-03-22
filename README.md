@@ -1,1 +1,1 @@
-# POC for schema driven api development based on openapi
+# POC for schema driven REST API development based on openapi
